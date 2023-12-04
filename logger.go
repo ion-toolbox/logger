@@ -6,22 +6,30 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
 
 type Logger struct {
-	entry  *log.Entry
-	logger *log.Logger
+	entry    *log.Entry
+	logger   *log.Logger
+	mainPath string
 }
 
 var instance *Logger
 
 func New() *Logger {
 	lgr := log.New()
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	exPath := filepath.Dir(ex)
 	return &Logger{
-		logger: lgr,
-		entry:  lgr.WithFields(log.Fields{}),
+		logger:   lgr,
+		entry:    lgr.WithFields(log.Fields{}),
+		mainPath: exPath,
 	}
 }
 
@@ -98,50 +106,50 @@ func GetWriter() io.Writer {
 
 func Debug(format string) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Debug(format)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Debug(format)
 }
 
 func Debugf(format string, params ...interface{}) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Debugf(format, params...)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Debugf(format, params...)
 }
 
 func Info(format string) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Info(format)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Info(format)
 }
 
 func Infof(format string, params ...interface{}) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Infof(format, params...)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Infof(format, params...)
 }
 
 func Warning(format string) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Warn(format)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Warn(format)
 }
 
 func Warningf(format string, params ...interface{}) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Warnf(format, params...)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Warnf(format, params...)
 }
 
 func Error(format string) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Error(format)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Error(format)
 }
 
 func Errorf(format string, params ...interface{}) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Errorf(format, params...)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Errorf(format, params...)
 }
 
 func Fatal(format string) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Fatal(format)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Fatal(format)
 }
 
 func Fatalf(format string, params ...interface{}) {
 	_, filename, line, _ := runtime.Caller(1)
-	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", filename, line)}).Fatalf(format, params...)
+	Shared().entry.WithFields(log.Fields{"at": fmt.Sprintf("%s:%d", strings.Replace(filename, Shared().mainPath, "", 1), line)}).Fatalf(format, params...)
 }
